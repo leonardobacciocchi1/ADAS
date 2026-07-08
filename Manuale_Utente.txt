@@ -1,0 +1,71 @@
+MANUALE FUNZIONAMENTO E TESTING:
+
+Per utilizzo del materiale fornito, bisogna considerare la mancata presenza di alcuni elementi fondamentali per motivazioni di spazio:
+
+1. Modelli pre-addestrati — i file con i pesi delle reti non sono inclusi in quanto troppo pesanti. Per testare senza riaddestrare da zero è necessario eseguire il training completo (~1.1M/750K step per DQN/DDQN, ~1M per PPO).
+
+2. Ambiente virtuale — non è inclusa la cartella .venv. È necessario crearne uno con Python 3.12 e installare le dipendenze:
+
+    pip install swig
+    pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+    pip install gymnasium[box2d] stable-baselines3 matplotlib pygame numpy
+
+------------------------------------------------------------------------------------------------------------------------------------------
+COMANDI BASE PER TRAINING:
+
+- Training DQN:
+
+    python train.py
+
+- Training DDQN:
+
+    python train.py --ddqn
+
+- Training PPO custom:
+
+    python train_ppo.py
+
+- Training SB3-PPO:
+
+    python train_sb3.py
+
+------------------------------------------------------------------------------------------------------------------------------------------
+PARAMETRI MODIFICABILI:
+
+In train.py:
+
+    -> MAX_STEP  — step totali di training (default 1.100.000)
+    -> N_CONV    — architettura CNN: 2=baseline, 3=Nature DQN
+    -> PER       — True/False per attivare Prioritized Experience Replay
+    -> RESUME_DA — path di un checkpoint per riprendere il training
+
+In train_ppo.py:
+
+    -> MAX_STEP — step totali (default 1.000.000)
+    -> N_STEPS  — dimensione rollout (default 2048)
+
+In train_sb3.py:
+
+    -> N_ENVS   — ambienti paralleli (default 8)
+    -> MAX_STEP — step totali (default 2.000.000)
+
+------------------------------------------------------------------------------------------------------------------------------------------
+NOTE SULL'AMBIENTE:
+
+- I comandi sopra assumono che il venv sia attivato (.venv\Scripts\activate).
+  In alternativa, senza attivare il venv:
+
+    uv run --python .venv/Scripts/python.exe train.py
+
+- L'ambiente usato è CarRacing-v3 (Gymnasium >= 1.0).
+
+- Per il training GPU (raccomandato): CUDA deve essere disponibile.
+  Il codice cade automaticamente su CPU se CUDA non è presente,
+  ma i tempi di training aumentano di 10-20x.
+
+- Tempi stimati:
+    DQN/DDQN 1.1M step  →  ~13-16 ore
+    PPO custom 1M step  →  ~13-16 ore
+    SB3-PPO 2M step     →  ~13-16 ore
+
+------------------------------------------------------------------------------------------------------------------------------------------
